@@ -40,13 +40,12 @@ void Sort(Vector<Type> &v, int (cmpFn)(Type, Type) = OperatorCmp) {
  * 4) Go to step 2 unless the considered range of the list is one element
  */
 
-//Does not work
-
-void swapVec(Vector<int> & vec, int i, int j) {
-    int temp = vec[i];
-    vec[i] = vec[j];
-    vec[j] = temp;
-}
+template <typename Type>
+    void Swap(Type & a, Type & b) {
+        Type temp = a;
+        a = b;
+        b = temp;
+    }
 
 // Arrange the vector so that it fulfills max heap property
 void heapify(Vector<int> & vec, int index, int length) {
@@ -65,11 +64,12 @@ void heapify(Vector<int> & vec, int index, int length) {
 
     //If changes needed to achieve max heap property, check to maintain max heap property after swap
     if (maxNode != index) {
-        swapVec(vec, index, maxNode);
+        Swap(vec[index], vec[maxNode]);
         heapify(vec, maxNode, length);
     }
 }
 
+//Sorts the Vector using heapsort algorithm
 void HeapSort(Vector<int> & v) {
 //Build a max heap:
     //First index to consider is floor((n-2)/2)
@@ -81,7 +81,7 @@ void HeapSort(Vector<int> & v) {
     //Then sort, by removing the max heap, moving it to sorted part of the vector
     //and re-heapifying the other part until the entire vector has been sorted
     for (int i = n-1; i>0; i--) {
-        swapVec(v, 0, i);
+        Swap(v[0], v[i]);
         //heapifies one shorter vector, excluding the sorted part
         heapify(v, 0, i);
     }
