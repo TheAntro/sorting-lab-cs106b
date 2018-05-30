@@ -19,13 +19,6 @@ using namespace std;
 
 const int sortSize = 9;
 
-/* Code from the assignment to turn the sorting function to a general version
-template <typename Type>
-void Sort(Vector<Type> &v, int (cmpFn)(Type, Type) = OperatorCmp) {
-
-}
-*/
-
 /*
  * heapsort consists of the following steps (source: https://en.wikipedia.org/wiki/Heapsort)
  *
@@ -40,6 +33,40 @@ void Sort(Vector<Type> &v, int (cmpFn)(Type, Type) = OperatorCmp) {
  * 4) Go to step 2 unless the considered range of the list is one element
  */
 
+struct coordT {
+    double x, y;
+};
+
+//These are directly from CS106B slides
+int coordCmp(coordT a, coordT b) {
+    if (a.x < b.x) return -1;
+    else if (a.x > b.x) return 1;
+    else if (a.y < b.y) return -1;
+    else if (a.y > b.y) return 1;
+    else return 0;
+}
+
+void coordPrint(coordT a) {
+    cout << "[" << a.x << "," << a.y << "]" << endl;
+}
+
+template <typename Type>
+    int reverseCmp(Type a, Type b) {
+        if (a == b) return 0;
+        return (a < b ? 1 : -1);
+    }
+
+template <typename Type>
+    int operatorCmp(Type a, Type b) {
+        if (a == b) return 0;
+        return (a < b ? -1 : 1);
+    }
+
+template <typename Type>
+    void normalPrint(Type a) {
+        cout << a << endl;
+    }
+
 template <typename Type>
     void Swap(Type & a, Type & b) {
         Type temp = a;
@@ -47,37 +74,39 @@ template <typename Type>
         b = temp;
     }
 
-// Arrange the vector so that it fulfills max heap property
+// Arrange the vector so that it fulfills max heap property, takes the comparison operator directly from
+    // the call to heapsort
 template <typename Type>
-    void heapify(Vector<Type> & vec, int index, int length) {
+    void heapify(Vector<Type> & vec, int index, int length, int(cmp)(Type, Type) = operatorCmp) {
         //max heap property: parent node is larger than its parents
         int maxNode = index;
         int leftChild = index*2 + 1;
         int rightChild = index*2 + 2;
 
-        if (leftChild < length && vec[leftChild] > vec[maxNode]) {
+        if (leftChild < length && cmp(vec[leftChild], vec[maxNode]) > 0) {
             maxNode = leftChild;
         }
 
-        if (rightChild < length && vec[rightChild] > vec[maxNode]) {
+        if (rightChild < length && cmp(vec[rightChild], vec[maxNode]) > 0) {
             maxNode = rightChild;
         }
 
         //If changes needed to achieve max heap property, check to maintain max heap property after swap
         if (maxNode != index) {
             Swap(vec[index], vec[maxNode]);
-            heapify(vec, maxNode, length);
+            heapify(vec, maxNode, length, cmp);
         }
     }
 
-//Sorts the Vector using heapsort algorithm
+//Sorts the Vector using heapsort algorithm, general so works for any datatypes.
+    // When normal comparison operators cannot be used, a comparison function must be given
 template <typename Type>
-    void HeapSort(Vector<Type> & v) {
+    void HeapSort(Vector<Type> & v, int (cmp)(Type, Type) = operatorCmp) {
     //Build a max heap:
         //First index to consider is floor((n-2)/2)
         int n = v.size();
         for(int i = (n-2)/2; i>=0; i--) {
-            heapify(v, i, n);
+            heapify(v, i, n, cmp);
         }
 
         //Then sort, by removing the max heap, moving it to sorted part of the vector
@@ -85,7 +114,7 @@ template <typename Type>
         for (int i = n-1; i>0; i--) {
             Swap(v[0], v[i]);
             //heapifies one shorter vector, excluding the sorted part
-            heapify(v, 0, i);
+            heapify(v, 0, i, cmp);
         }
     }
 
@@ -110,25 +139,33 @@ Vector<char> charVecGenerator(int length) {
 }
 
 template <typename Type>
-    void printVec(Vector<Type> & v) {
+    void printVec(Vector<Type> & v, void (prnt)(Type) = normalPrint) {
         for (int i = 0; i < v.size(); i++) {
-            cout << v[i] << endl;
+            prnt(v[i]);
         }
     }
 
 int main() {
 
     //Vector<int> vecToSort = intVecGenerator(sortSize);
-    Vector<char> vecToSort = charVecGenerator(sortSize);
+    //Vector<char> vecToSort = charVecGenerator(sortSize);
+    //Vector<coordT> vecToSort = coordVecGenerator(sortSize);
+    Vector<coordT> vecToSort;
+    for (int i = 0; i < sortSize; i++) {
+        coordT coordinate;
+        coordinate.x = randomInteger(-10, 10);
+        coordinate.y = randomInteger(-10, 10);
+        vecToSort.push_back(coordinate);
+    }
 
     cout << "Vector size: " << vecToSort.size() << endl;
 
     //HeapSort(vecToSort);
-    printVec(vecToSort);
+    printVec(vecToSort, coordPrint);
     cout << endl;
 
-    HeapSort(vecToSort);
-    printVec(vecToSort);
+    HeapSort(vecToSort, coordCmp);
+    printVec(vecToSort, coordPrint);
 
     /*
     // timing purposes: program start time in seconds
