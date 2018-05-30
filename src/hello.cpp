@@ -48,44 +48,46 @@ template <typename Type>
     }
 
 // Arrange the vector so that it fulfills max heap property
-void heapify(Vector<int> & vec, int index, int length) {
-    //max heap property: parent node is larger than its parents
-    int maxNode = index;
-    int leftChild = index*2 + 1;
-    int rightChild = index*2 + 2;
+template <typename Type>
+    void heapify(Vector<Type> & vec, int index, int length) {
+        //max heap property: parent node is larger than its parents
+        int maxNode = index;
+        int leftChild = index*2 + 1;
+        int rightChild = index*2 + 2;
 
-    if (leftChild < length && vec[leftChild] > vec[maxNode]) {
-        maxNode = leftChild;
-    }
+        if (leftChild < length && vec[leftChild] > vec[maxNode]) {
+            maxNode = leftChild;
+        }
 
-    if (rightChild < length && vec[rightChild] > vec[maxNode]) {
-        maxNode = rightChild;
-    }
+        if (rightChild < length && vec[rightChild] > vec[maxNode]) {
+            maxNode = rightChild;
+        }
 
-    //If changes needed to achieve max heap property, check to maintain max heap property after swap
-    if (maxNode != index) {
-        Swap(vec[index], vec[maxNode]);
-        heapify(vec, maxNode, length);
+        //If changes needed to achieve max heap property, check to maintain max heap property after swap
+        if (maxNode != index) {
+            Swap(vec[index], vec[maxNode]);
+            heapify(vec, maxNode, length);
+        }
     }
-}
 
 //Sorts the Vector using heapsort algorithm
-void HeapSort(Vector<int> & v) {
-//Build a max heap:
-    //First index to consider is floor((n-2)/2)
-    int n = v.size();
-    for(int i = (n-2)/2; i>=0; i--) {
-        heapify(v, i, n);
-    }
+template <typename Type>
+    void HeapSort(Vector<Type> & v) {
+    //Build a max heap:
+        //First index to consider is floor((n-2)/2)
+        int n = v.size();
+        for(int i = (n-2)/2; i>=0; i--) {
+            heapify(v, i, n);
+        }
 
-    //Then sort, by removing the max heap, moving it to sorted part of the vector
-    //and re-heapifying the other part until the entire vector has been sorted
-    for (int i = n-1; i>0; i--) {
-        Swap(v[0], v[i]);
-        //heapifies one shorter vector, excluding the sorted part
-        heapify(v, 0, i);
+        //Then sort, by removing the max heap, moving it to sorted part of the vector
+        //and re-heapifying the other part until the entire vector has been sorted
+        for (int i = n-1; i>0; i--) {
+            Swap(v[0], v[i]);
+            //heapifies one shorter vector, excluding the sorted part
+            heapify(v, 0, i);
+        }
     }
-}
 
 
 // Generates a vector full of random integers between 1 and 10000
@@ -98,14 +100,26 @@ Vector<int> intVecGenerator(int length) {
     return vec;
 }
 
-void printVec(Vector<int> & v) {
-    for (int i = 0; i < v.size(); i++) {
-        cout << v[i] << endl;
+Vector<char> charVecGenerator(int length) {
+    Vector<char> v;
+    for (int i = 0; i < length; i++) {
+        char ch = getChar("Enter a char: ");
+        v.push_back(ch);
     }
+    return v;
 }
 
+template <typename Type>
+    void printVec(Vector<Type> & v) {
+        for (int i = 0; i < v.size(); i++) {
+            cout << v[i] << endl;
+        }
+    }
+
 int main() {
-    Vector<int> vecToSort = intVecGenerator(sortSize);
+
+    //Vector<int> vecToSort = intVecGenerator(sortSize);
+    Vector<char> vecToSort = charVecGenerator(sortSize);
 
     cout << "Vector size: " << vecToSort.size() << endl;
 
