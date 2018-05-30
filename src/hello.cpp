@@ -1,5 +1,6 @@
 /*
  * Author: Valtteri Ranta, github: waldeog
+ * DONE: Tested with ints, chars, and self-created structs (coordT)
  *
  * This project implements the CS106B assignment 5b: a general sorting algorithm other than selection,
  * insertion, merge, or quicksort
