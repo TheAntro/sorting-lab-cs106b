@@ -77,6 +77,14 @@ void HeapSort(Vector<int> & v) {
     for(int i = (n-2)/2; i>=0; i--) {
         heapify(v, i, n);
     }
+
+    //Then sort, by removing the max heap, moving it to sorted part of the vector
+    //and re-heapifying the other part until the entire vector has been sorted
+    for (int i = n-1; i>0; i--) {
+        swapVec(v, 0, i);
+        //heapifies one shorter vector, excluding the sorted part
+        heapify(v, 0, i);
+    }
 }
 
 
