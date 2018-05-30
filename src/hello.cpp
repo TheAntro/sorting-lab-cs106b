@@ -17,7 +17,7 @@
 
 using namespace std;
 
-const int sortSize = 10000;
+const int sortSize = 9;
 
 /* Code from the assignment to turn the sorting function to a general version
 template <typename Type>
@@ -42,50 +42,40 @@ void Sort(Vector<Type> &v, int (cmpFn)(Type, Type) = OperatorCmp) {
 
 //Does not work
 
-void swap(Vector<int> & vec, int i, int j) {
+void swapVec(Vector<int> & vec, int i, int j) {
     int temp = vec[i];
     vec[i] = vec[j];
     vec[j] = temp;
 }
 
-void BuildMaxHeap(Vector<int> & vec, int n, int i) {
-    int max = i; //largest initialized as root
-    int left = 2*i + 1; //Left child position can be calculated from root with 2*i+1
-    int right = 2*i + 2; //Right child position can be calculated from root with 2*i+2
+// Arrange the vector so that it fulfills max heap property
+void heapify(Vector<int> & vec, int index, int length) {
+    //max heap property: parent node is larger than its parents
+    int maxNode = index;
+    int leftChild = index*2 + 1;
+    int rightChild = index*2 + 2;
 
-    //If left child is larger than root
-    if (left < n && vec[left] > vec[max]) {
-        max = left;
+    if (leftChild < length && vec[leftChild] > vec[maxNode]) {
+        maxNode = leftChild;
     }
 
-    //If right is larger than the largest so far
-    if (right < n && vec[right] > vec[max]) {
-        max = right;
+    if (rightChild < length && vec[rightChild] > vec[maxNode]) {
+        maxNode = rightChild;
     }
 
-    //If max is not root
-    if (max != i) {
-        swap(vec, i, max);
-
-        //Recursively heapify the affected sub-tree down
-        BuildMaxHeap(vec, n, max);
+    //If changes needed to achieve max heap property, check to maintain max heap property after swap
+    if (maxNode != index) {
+        swapVec(vec, index, maxNode);
+        heapify(vec, maxNode, length);
     }
 }
 
 void HeapSort(Vector<int> & v) {
-    //Build the heap (rearrange the vector so that at index i, left child = 2*i+1, right child = 2*i+2
+//Build a max heap:
+    //First index to consider is floor((n-2)/2)
     int n = v.size();
-    for (int i = n/2-1; i >= 0; i--) {
-        BuildMaxHeap(v, n, i);
-    }
-
-    //One by one extract an element from heap
-    for (int i=n-1; i >= 0; i--) {
-        //Current root to the end
-        swap(v, 0, i);
-
-        //Heapify the reduced heap
-        BuildMaxHeap(v, n, 0);
+    for(int i = (n-2)/2; i>=0; i--) {
+        heapify(v, i, n);
     }
 }
 
@@ -110,6 +100,10 @@ int main() {
     Vector<int> vecToSort = intVecGenerator(sortSize);
 
     cout << "Vector size: " << vecToSort.size() << endl;
+
+    //HeapSort(vecToSort);
+    printVec(vecToSort);
+    cout << endl;
 
     HeapSort(vecToSort);
     printVec(vecToSort);
